@@ -1,9 +1,9 @@
+---
 name: cd
-
 on:
   push:
-    branches: [main]
-
+    branches:
+      - main
 jobs:
   deploy:
     name: Deploy
@@ -14,23 +14,20 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23.0"
+          go-version: 1.23.0
       - name: Build program
         run: ./scripts/buildprod.sh
-
-      - id: 'auth'
-      uses: 'google-github-actions/auth@v2'
-      with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v2'
-
-    - name: 'Use gcloud CLI'
-      run: 'gcloud info'
-
-    - name: 'Build Docker image'
-      run: docker build . -t ganbatte8/notely:latest
-
-    - name: 'Push to Google Artifact Registry'
-      run: gcloud builds submit --tag us-central1-docker.pkg.dev/notely-450614/notely-ar-repo/notely:latest .
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with: null
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Use gcloud CLI
+        run: gcloud info
+      - name: Build Docker image
+        run: docker build . -t ganbatte8/notely:latest
+      - name: Push to Google Artifact Registry
+        run: gcloud builds submit --tag
+          us-central1-docker.pkg.dev/notely-450614/notely-ar-repo/notely:latest
+          .
